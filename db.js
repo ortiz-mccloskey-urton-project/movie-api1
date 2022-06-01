@@ -13,7 +13,7 @@ const fetchSettings = {
 }
 
 
-    fetch(baseURL + "?title=" , fetchSettings )
+    fetch(baseURL + "?id=260" , fetchSettings )
         .then(res => res.json())
         .then(res => {
             console.log("res:", res)
