@@ -27,16 +27,19 @@ const createForm = (name, data) => {
 
     return `
         <form name="${name}">
-        <input type="hidden" name="id" value="${id}">
-        <label for="field1">Title</label><input type="text" name="title" value="${title.toUpperCase()}" id="field1">
-        <label for="field2">First Name</label><input type="text" name="director" value="${director}" id="field2">
-        <label for="field3">Last Name</label><input type="text" name="rating" value="${rating}" id="field3">
-        <label for="field4">Gender</label><input type="text" name="genre" value="${genre}" id="field4">
+        <form name="${name}">
+        <label for="field1">Title</label><input type="text" name="title" value="${title}" id="field1">
+        <label for="field2">director</label><input type="text" name="director" value="${director}" id="field2">
+        <label for="field3">Rating</label><input type="text" name="rating" value="${rating}" id="field3">
+        <label for="field4">Gendre</label><input type="text" name="genre" value="${genre}" id="field4">
+                <label for="field5">id</label><input type="text" name="id" value="${id}" id="field4">
+
     </form>
     `
 }
 
 
+// document.getElementById('cancel')
 // Headers this application uses across the board.
 const customHeaders = new Headers({
     'Content-Type': 'application/json'
@@ -70,9 +73,12 @@ const handleCreateUserView = (event) => {
     modal.foot.innerHTML = mapButtonsForUpdate(0,"create")
 
     $("button.confirm.create").click(handleDoCreateMovie);
+    enableModal();
 }
 $("#create").click(handleCreateUserView);
 
+
+// document.getElementById('modal-container').classList.remove('hide')
 const handleDoCreateMovie = (event) => {
     // TODO: Create a new User!
     event.preventDefault();
@@ -96,15 +102,16 @@ const handleDoCreateMovie = (event) => {
     }
 
 
-    fetch(baseURL + "/create", settings)
-        .then(res => res.json())
-        .then(res => {
-            console.log("res:", res)
+    fetch(baseURL , settings)
+        .then(data => data.json())
+        .then(data => {
+            console.log("res:", data)
         })
-    document.getElementById("userTable").innerHTML +=
-        res.map((item) => item.title).join("<br>");
+    // document.getElementById("userTable").innerHTML +=
+    //     data.map((item) => item.title).join("");
 
 }
+
 const mapUserCreateForm = () => {
     return createForm("create")
 }
@@ -113,7 +120,14 @@ const mapButtonsForUpdate = (id,  type='update') => {
           <button class="confirm ${type}" value="${id}">Confirm</button>
           <button class="cancel">Cancel</button>
             </form>`
+
+
+
+
 }
+// document.getElementById('.confirm').addEventListener('click', () => {
+//     console.log("test")
+// })
 
 const toggleModal = () => {
     // show hide modal logic
@@ -132,3 +146,57 @@ const disableModal = () => {
 }
 
 
+const handleDisplayProfile = (event) => {
+    toggleModal();
+    // TODO: Create fetch to get the profile information
+    // TODO: Map info to modal in view.
+
+    // console.log("event.target.dataset.id", event.target.dataset.id);
+
+    fetch(baseURL + event.target.dataset.id, fetchSettings)
+        .then(res => res.json())
+        .then(res => {
+            // console.log("res user:", res)
+            modal.foot.innerHTML = `<button class="close-modal">Close</button>`
+
+            $(".close-modal").click(() => disableModal());
+
+
+        })
+}
+$(".user-record").click(handleDisplayProfile);
+
+
+
+const mapUserToRecord = ({id, firstName, rating, picture, title}) => {
+    return `<tr data-id="${id}" >
+                       <td>
+<!--                            <img src="${picture}">-->
+                       </td>
+                       <td data-id="${id}" class="user-record">${title}. ${firstName} ${rating}</td>
+              
+                       <td>
+                            <button class="delete" value="${id}">X</button>
+                            <button class="edit" value="${id}">Edit</button>
+                       </td>
+                   </tr>`
+};
+
+fetch(baseURL , fetchSettings)
+    .then(res => res.json())
+    .then(res => {
+        // want to map the users to the page
+        // console.log("res:", res)
+        // mapUserToRecord()
+
+        console.log("res:", res)
+
+        document.getElementById("movie").innerHTML +=
+            res.map(mapUserToRecord).join("");
+
+        //event handlers!
+        // $(".delete").click(handleDeleteView);
+        // $(".edit").click(handleDisplayUpdate);
+        // $(".user-record").click(handleDisplayProfile);
+        // $("#create").click(handleCreateUserView);
+    });
