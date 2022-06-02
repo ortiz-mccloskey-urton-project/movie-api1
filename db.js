@@ -52,7 +52,7 @@ const fetchSettings = {
 }
 
 
-fetch(baseURL + "?_start=14&_limit=15", fetchSettings)
+fetch(baseURL + "?_start=14&_limit=25", fetchSettings)
     .then(res => res.json())
     .then(res => {
         console.log("res:", res)
@@ -75,12 +75,18 @@ const handleCreateUserView = (event) => {
     $("button.confirm.create").click(handleDoCreateMovie);
     enableModal();
 }
+
+
+
 $("#create").click(handleCreateUserView);
+
 
 
 // document.getElementById('modal-container').classList.remove('hide')
 const handleDoCreateMovie = (event) => {
+
     // TODO: Create a new User!
+
     event.preventDefault();
 
     const form = document.forms.create;
@@ -92,7 +98,9 @@ const handleDoCreateMovie = (event) => {
         genre: form.genre.value,
         rating: form.rating.value,
 
+
     }
+
 
     // Data request to create a new one
     let settings = {
@@ -115,19 +123,64 @@ const handleDoCreateMovie = (event) => {
 const mapUserCreateForm = () => {
     return createForm("create")
 }
+
 const mapButtonsForUpdate = (id,  type='update') => {
     return ` <form>
           <button class="confirm ${type}" value="${id}">Confirm</button>
           <button class="cancel">Cancel</button>
             </form>`
 
-
-
-
 }
+
 // document.getElementById('.confirm').addEventListener('click', () => {
 //     console.log("test")
 // })
+
+
+const handleDeleteView = (event) => {
+    // console.log("handle Delete")
+    toggleModal();
+
+    modal.head.innerHTML = `<h3>Do you wish to delete this User?</h3>`
+    modal.main.innerHTML = "<p>If you delete this User its gone forever.</p>"
+    modal.foot.innerHTML = mapUserToDelete(event.target.value);
+
+    $("button.confirm").click(handleDoDelete);
+
+};
+$(".delete").click(handleDeleteView);
+
+
+//  delete fetch request
+const handleDoDelete = (event) => {
+    event.preventDefault();
+
+    // TODO: Delete User by ID
+    // TODO: Hide Modal
+    // TODO: Reload form
+
+    let settings = fetchSettings;
+    settings.method = "DELETE";
+
+    fetch(baseURL, event.target.value, settings)
+        .then(res => res.json())
+        .then(res => {
+            console.log("res :", res);
+            disableModal();
+        })
+
+}
+
+
+const mapUserToDelete = (id) => {
+    return `<form>
+          <button class="confirm delete" value="${id}">Confirm</button>
+          <button class="cancel">Cancel</button>
+    </form>
+    `
+
+}
+
 
 const toggleModal = () => {
     // show hide modal logic
@@ -151,7 +204,7 @@ const handleDisplayProfile = (event) => {
     // TODO: Create fetch to get the profile information
     // TODO: Map info to modal in view.
 
-    // console.log("event.target.dataset.id", event.target.dataset.id);
+    console.log("event.target.dataset.id", event.target.dataset.id);
 
     fetch(baseURL + event.target.dataset.id, fetchSettings)
         .then(res => res.json())
@@ -168,12 +221,12 @@ $(".user-record").click(handleDisplayProfile);
 
 
 
-const mapUserToRecord = ({id, firstName, rating, picture, title}) => {
+const mapUserToRecord = ({id, director, rating, picture, title}) => {
     return `<tr data-id="${id}" >
                        <td>
 <!--                            <img src="${picture}">-->
                        </td>
-                       <td data-id="${id}" class="user-record">${title}. ${firstName} ${rating}</td>
+                       <td data-id="${id}" class="user-record">Title: <em>${title}</em> - Directed by: <em>${director} </em> Rated: ${rating}/5</td>
               
                        <td>
                             <button class="delete" value="${id}">X</button>
@@ -189,13 +242,13 @@ fetch(baseURL , fetchSettings)
         // console.log("res:", res)
         // mapUserToRecord()
 
-        console.log("res:", res)
+        // console.log("res:", res)
 
         document.getElementById("movie").innerHTML +=
             res.map(mapUserToRecord).join("");
 
         //event handlers!
-        // $(".delete").click(handleDeleteView);
+        $(".delete").click(handleDeleteView);
         // $(".edit").click(handleDisplayUpdate);
         // $(".user-record").click(handleDisplayProfile);
         // $("#create").click(handleCreateUserView);
