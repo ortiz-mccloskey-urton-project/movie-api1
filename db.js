@@ -59,6 +59,7 @@ fetch(baseURL + "?_start=14&_limit=15", fetchSettings)
             res.map((item) => item.title).join("<br>");
 
     })
+
 const handleCreateUserView = (event) => {
     // TODO: Create form for users to fill out
     // Inputs!
@@ -68,11 +69,11 @@ const handleCreateUserView = (event) => {
     modal.main.innerHTML = mapUserCreateForm();
     modal.foot.innerHTML = mapButtonsForUpdate(0,"create")
 
-    $("button.confirm.create").click(handleDoCreateUser);
+    $("button.confirm.create").click(handleDoCreateMovie);
 }
 $("#create").click(handleCreateUserView);
 
-const handleDoCreateUser = (event) => {
+const handleDoCreateMovie = (event) => {
     // TODO: Create a new User!
     event.preventDefault();
 
@@ -102,6 +103,7 @@ const handleDoCreateUser = (event) => {
         })
     document.getElementById("userTable").innerHTML +=
         res.map((item) => item.title).join("<br>");
+
 }
 const mapUserCreateForm = () => {
     return createForm("create")
