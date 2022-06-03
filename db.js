@@ -233,7 +233,12 @@ const mapUserToRecord = ({id, director, rating, picture, title}) => {
                             <button class="edit" value="${id}">Edit</button>
                        </td>
                    </tr>`
+
 };
+$('button.cancel').on('click', function (e) {
+    e.preventDefault()
+    toggleModal()
+})
 
 fetch(baseURL , fetchSettings)
     .then(res => res.json())
