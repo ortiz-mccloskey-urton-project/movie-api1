@@ -149,7 +149,7 @@ const handleDeleteView = (event) => {
     modal.main.innerHTML = "<p>If you delete this User its gone forever.</p>"
      modal.foot.innerHTML = mapUserToDelete(event.target.value);
 
-    $("button.confirm").click(handleDoDelete);
+    $("button.confirm.delete").click(handleDoDelete);
     toggleModal();
 };
 $(".delete").click(handleDeleteView);
@@ -166,11 +166,11 @@ const handleDoDelete = (event) => {
     let settings = fetchSettings;
     settings.method = "DELETE";
 
-    fetch(baseURL + "/{$id}/", settings)
+    fetch(baseURL + "/" + event.target.value, settings)
         .then(res => res.json())
         .then(res => {
-            console.log("res :", res);
-            disableModal();
+            tableFetch().then(() => disableModal())
+            ;
         })
 
 }
@@ -244,21 +244,24 @@ const mapUserToRecord = ({id, director, rating, picture, title}) => {
 //     toggleModal();
 // })
 
-fetch(baseURL , fetchSettings)
-    .then(res => res.json())
-    .then(res => {
-        // want to map the users to the page
-        // console.log("res:", res)
-        // mapUserToRecord()
+function tableFetch () {
+    return fetch(baseURL, fetchSettings)
+        .then(res => res.json())
+        .then(res => {
+            // want to map the users to the page
+            // console.log("res:", res)
+            // mapUserToRecord()
 
-        // console.log("res:", res)
+            console.log("res:", res)
 
-        document.getElementById("movie").innerHTML +=
-            res.map(mapUserToRecord).join("");
+            document.getElementById("movie").innerHTML =
+                res.map(mapUserToRecord).join("");
 
-        //event handlers!
-        $(".delete").click(handleDeleteView);
-        // $(".edit").click(handleDisplayUpdate);
-        // $(".user-record").click(handleDisplayProfile);
-        // $("#create").click(handleCreateUserView);
-    });
+            //event handlers!
+            $(".delete").click(handleDeleteView);
+            // $(".edit").click(handleDisplayUpdate);
+            // $(".user-record").click(handleDisplayProfile);
+            // $("#create").click(handleCreateUserView);
+        });
+}
+tableFetch()
