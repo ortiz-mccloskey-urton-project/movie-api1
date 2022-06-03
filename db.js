@@ -26,14 +26,15 @@ const createForm = (name, data) => {
     // if(data) dateOfBirth = dateOfBirth.slice(0, dateOfBirth.length-1);
 
     return `
-        <form name="${name}">
+     
         <form name="${name}">
         <label for="field1">Title</label><input type="text" name="title" value="${title}" id="field1">
         <label for="field2">director</label><input type="text" name="director" value="${director}" id="field2">
         <label for="field3">Rating</label><input type="text" name="rating" value="${rating}" id="field3">
-        <label for="field4">Gendre</label><input type="text" name="genre" value="${genre}" id="field4">
-                <label for="field5">id</label><input type="text" name="id" value="${id}" id="field4">
-
+        <label for="field4">Genre</label><input type="text" name="genre" value="${genre}" id="field4">
+        <input type="hidden" name="id" value="${id}" >
+            
+  
     </form>
     `
 }
@@ -70,8 +71,13 @@ const handleCreateUserView = (event) => {
     enableModal();
     console.log("test:",modal.main)
     modal.main.innerHTML = mapUserCreateForm();
-    modal.foot.innerHTML = mapButtonsForUpdate(0,"create")
+    modal.foot.innerHTML = /*mapButtonsForUpdate(0,"create")*/ "<button class='confirm create'>Confirm</button><button class='cancel'>Cancel</button>"
 
+    $('button.cancel').click( function (e) {
+        console.log("test:")
+        e.preventDefault();
+        toggleModal();
+    })
     $("button.confirm.create").click(handleDoCreateMovie);
     enableModal();
 }
@@ -92,13 +98,11 @@ const handleDoCreateMovie = (event) => {
     const form = document.forms.create;
 
     let data = {
-        id: form.id.value,
+
         title: form.title.value,
         director: form.director.value,
         genre: form.genre.value,
         rating: form.rating.value,
-
-
     }
 
 
@@ -139,14 +143,14 @@ const mapButtonsForUpdate = (id,  type='update') => {
 
 const handleDeleteView = (event) => {
     // console.log("handle Delete")
-    toggleModal();
+
 
     modal.head.innerHTML = `<h3>Do you wish to delete this User?</h3>`
     modal.main.innerHTML = "<p>If you delete this User its gone forever.</p>"
-    modal.foot.innerHTML = mapUserToDelete(event.target.value);
+     modal.foot.innerHTML = mapUserToDelete(event.target.value);
 
     $("button.confirm").click(handleDoDelete);
-
+    toggleModal();
 };
 $(".delete").click(handleDeleteView);
 
@@ -162,7 +166,7 @@ const handleDoDelete = (event) => {
     let settings = fetchSettings;
     settings.method = "DELETE";
 
-    fetch(baseURL, event.target.value, settings)
+    fetch(baseURL + "/{$id}/", settings)
         .then(res => res.json())
         .then(res => {
             console.log("res :", res);
@@ -170,7 +174,6 @@ const handleDoDelete = (event) => {
         })
 
 }
-
 
 const mapUserToDelete = (id) => {
     return `<form>
@@ -235,10 +238,11 @@ const mapUserToRecord = ({id, director, rating, picture, title}) => {
                    </tr>`
 
 };
-$('button.cancel').on('click', function (e) {
-    e.preventDefault()
-    toggleModal()
-})
+// $('button.cancel').click( function (e) {
+//     console.log("test:")
+//     e.preventDefault();
+//     toggleModal();
+// })
 
 fetch(baseURL , fetchSettings)
     .then(res => res.json())
