@@ -169,8 +169,8 @@ const handleDoDelete = (event) => {
     fetch(baseURL + "/" + event.target.value, settings)
         .then(res => res.json())
         .then(res => {
-            tableFetch().then(() => disableModal())
-            ;
+            tableFetch().then(() => disableModal());
+
         })
 
 }
@@ -245,7 +245,7 @@ const mapUserToRecord = ({id, director, rating, picture, title}) => {
 // })
 
 function tableFetch () {
-    return fetch(baseURL, fetchSettings)
+    return fetch(baseURL + "?_start=14&_limit=25" + fetchSettings)
         .then(res => res.json())
         .then(res => {
             // want to map the users to the page
