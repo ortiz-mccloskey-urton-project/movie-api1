@@ -53,7 +53,7 @@ const fetchSettings = {
 }
 
 
-fetch(baseURL + "?_start=14&_limit=25", fetchSettings)
+fetch(baseURL + "?_start=1&_limit=35", fetchSettings)
     .then(res => res.json())
     .then(res => {
         console.log("res:", res)
@@ -135,6 +135,63 @@ const mapButtonsForUpdate = (id,  type='update') => {
             </form>`
 
 }
+
+const mapUserToUpdate = (data) => {
+    return createForm("update", data)
+}
+
+const handleDisplayUpdate = (event) => {
+    enableModal();
+    //console.log("event :", event);
+
+    //TODO: Get Data from user by Id
+    //TODO: Map to update form
+    //TODO: Add handlers
+
+    fetch(baseURL + "/" + event.target.value, fetchSettings)
+        .then(res => res.json())
+        .then(res => {
+
+            modal.main.innerHTML = mapUserToUpdate(res);
+            modal.foot.innerHTML = mapButtonsForUpdate(res.id);
+
+
+            $("button.confirm.update").click(handleDoUpdate);
+
+
+
+        })
+
+
+};
+
+const handleDoUpdate = (event) => {
+    event.preventDefault();
+
+    const form = document.forms.update;
+
+    let data = {
+        title: form.title.value,
+        director: form.director.value,
+        genre: form.genre.value,
+        rating: form.rating.value,
+    }
+
+    let settings = {
+        ...fetchSettings,
+        method: "PUT",
+        body: JSON.stringify(data)
+    }
+
+    fetch(baseURL + "/" + event.target.value, settings)
+        .then(res => res.json())
+        .then(res => {
+            console.log("res:", res);
+            // TODO: use this value to update the field record in the table
+            disableModal();
+        })
+}
+
 
 // document.getElementById('.confirm').addEventListener('click', () => {
 //     console.log("test")
@@ -245,7 +302,7 @@ const mapUserToRecord = ({id, director, rating, picture, title}) => {
 // })
 
 function tableFetch () {
-    return fetch(baseURL + "?_start=14&_limit=25" + fetchSettings)
+    return fetch(baseURL + "?_start=1&_limit=25" + fetchSettings)
         .then(res => res.json())
         .then(res => {
             // want to map the users to the page
@@ -259,7 +316,7 @@ function tableFetch () {
 
             //event handlers!
             $(".delete").click(handleDeleteView);
-            // $(".edit").click(handleDisplayUpdate);
+            $(".edit").click(handleDisplayUpdate);
             // $(".user-record").click(handleDisplayProfile);
             // $("#create").click(handleCreateUserView);
         });
