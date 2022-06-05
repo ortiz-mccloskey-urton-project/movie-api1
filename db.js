@@ -90,8 +90,7 @@ $("#create").click(handleCreateUserView);
 
 // document.getElementById('modal-container').classList.remove('hide')
 const handleDoCreateMovie = (event) => {
-
-    // TODO: Create a new User!
+    // TODO: Create a new movie!
 
     event.preventDefault();
 
@@ -105,14 +104,12 @@ const handleDoCreateMovie = (event) => {
         rating: form.rating.value,
     }
 
-
     // Data request to create a new one
     let settings = {
         ...fetchSettings,
         method: "POST",
         body: JSON.stringify(data)
     }
-
 
     fetch(baseURL , settings)
         .then(data => data.json())
